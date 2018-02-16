@@ -1,0 +1,19 @@
+{
+  "name": "research-ipdag",
+  "version": "1.0.0",
+  "description": "Research on IPFS DAG",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevingzhang/research-ipdag.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevingzhang/research-ipdag/issues"
+  },
+  "homepage": "https://github.com/kevingzhang/research-ipdag#readme"
+}
