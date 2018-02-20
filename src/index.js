@@ -2,9 +2,9 @@ import {createNode} from "./create-node.js"
 import CID from 'cids'
 import Room from 'ipfs-pubsub-room'
 
-// import Graph from 'ipld-graph-builder'
-// import  dagPB from 'ipld-dag-pb'
-// const {DAGNode, DAGLink} = dagPB;
+import Graph from 'ipld-graph-builder'
+import  dagPB from 'ipld-dag-pb'
+const {DAGNode, DAGLink} = dagPB;
 
 const ipfsOptions = {
   repo: '../ipfsRepo/1',// + Math.floor(Math.random() * 10000),
@@ -43,6 +43,7 @@ const run = (args)=>{
     case 'broaddcast':{
       const msg = args[2].trim();
       channel.broadcast(msg);
+      break;
     }
     case 'get':{
       const cid = args[2].trim()
@@ -68,6 +69,49 @@ const run = (args)=>{
       })
       break;
     }
+    case 'put':{
+      const obj = {
+        Data: new Buffer('Some data'),
+        Links: []
+      }
+      
+      store.object.put(obj, (err, node) => {
+        if (err) {
+          throw err
+        }
+        console.log(node.toJSON().multihash)
+        // Logs:
+        // QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK
+      })
+    }
+    break;
+    case 'patchAddLink':{
+      const multihash = args[2]
+      store.object.patch.addLink(multihash, {
+        name: 'some-link',
+        size: 10,
+        multihash: 'QmPTkMuuL6PD8L2SwTwbcs1NPg14U8mRzerB1ZrrBrkSDD'
+      }, (err, newNode) => {
+        if (err) {
+          throw err
+        }
+        // newNode is node with the added link
+        console.log("New node:", newNode);
+      })
+    }
+    break;
+    case 'patchRmLink':{
+      const multihash = args[2]
+      const lnk = new DAGLink('some-link',10,'QmPTkMuuL6PD8L2SwTwbcs1NPg14U8mRzerB1ZrrBrkSDD')
+      store.object.patch.rmLink(multihash, lnk, (err, newNode) => {
+        if (err) {
+          throw err
+        }
+        // newNode is node with the added link
+        console.log("New node:", newNode);
+      })
+    }
+    break;
     default:
       console.log("Do not understand,", args) 
     break;     
@@ -95,7 +139,7 @@ ipfsOptions.callback = {
     })
 
     room.on('message', (message)=>{
-      console.log(`Received message from ${message.from}: ${message.data.toString()} @ ${message.topicIDs}`);
+      //console.log(`Received message from ${message.from}: ${message.data.toString()} @ ${message.topicIDs}`);
       const args = message.data.toString().split(' ')
       switch(args[0].trim()){
         case 'do':

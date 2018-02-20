@@ -2,6 +2,7 @@ import {createNode} from "./create-node.js"
 import Room from 'ipfs-pubsub-room'
 import readline from 'readline'
 
+
 const ipfsOptions = {
   repo: '../ipfsRepo/cli',// + Math.floor(Math.random() * 10000),
   EXPERIMENTAL: {
@@ -15,10 +16,11 @@ const ipfsOptions = {
     }
   }
 }
-let channel;
+let channel, store;
 ipfsOptions.callback = {
   onReady: (ipfs)=>{
     const room = Room(ipfs, 'weatherblock')
+    store = ipfs;
     channel = room;
 
     room.on('peer joined', (peer) => {
@@ -53,26 +55,100 @@ createNode(ipfsOptions, (err, ipfs) => {
   rl.prompt();
   
   rl.on('line', (line) => {
-    switch (line.trim()) {
-      case '':break;
-      case 'help':
-        console.log('hello world, help information here!');
+    const args = line.trim().split(' ');
+    if(args.length > 0){
+      switch (args[0]) {
+      
+        case 'help':
+          console.log('hello world, help information here!');
+          break;
+        case 'peers':
+          console.log(channel? channel.getPeers(): "Channel not ready");
+          break;
+        case 'local':{
+          localCommand(args, store);
+          break;
+        }
+        default:
+        if(channel){
+          channel.broadcast(line.trim())
+        }
+        else  
+          console.log(`Say what? I might have heard '${line.trim()}'`);
         break;
-      case 'peers':
-        console.log(channel? channel.getPeers(): "Channel not ready");
-        break;
-      default:
-      if(channel){
-        channel.broadcast(line.trim())
       }
-      else  
-        console.log(`Say what? I might have heard '${line.trim()}'`);
-      break;
-    }
-    rl.prompt();
+      rl.prompt();
+    }   
   }).on('close', () => {
     console.log('Have a great day!');
     process.exit(0);
   });
 })
 
+const localCommand = (args, store)=>{
+  if (args.length == 0) return;
+  switch(args[1]){
+    case 'get':{
+      const multihash = args[2];
+      
+      store.object.get(multihash, (err, node) => {
+        console.log('response from command:', args.join(' '));
+        if (err) {
+          throw err
+        }
+        
+        console.log(node.toJSON())
+        // Logs:
+        // QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK
+      })
+    }
+    break;
+    case 'data':{
+      const multihash = args[2];
+      
+      store.object.data(multihash, (err, data) => {
+        console.log('response from command:', args.join(' '));
+        if (err) {
+          throw err
+        }
+        
+        console.log(data.toString())
+        // Logs:
+        // QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK
+      })
+    }
+    break;
+    case 'links':{
+      const multihash = args[2];
+      
+      store.object.links(multihash, (err, links) => {
+        console.log('response from command:', args.join(' '));
+        if (err) {
+          throw err
+        }
+        
+        console.log(links)
+        // Logs:
+        // QmPb5f92FxKPYdT3QNBd1GKiL4tZUXUrzF4Hkpdr3Gf1gK
+      })
+    }
+    break;
+    case 'stat':{
+      const multihash = args[2];
+      
+      store.object.stat(multihash, (err, stats) => {
+        console.log('response from command:', args.join(' '));
+        if (err) {
+          throw err
+        }
+        
+        console.log(stats)
+        
+      })
+    }
+    break;
+    default:
+      console.log("Unknown command", args);
+    break;
+  }
+}
