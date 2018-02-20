@@ -4,7 +4,9 @@
   "description": "Research on IPFS DAG",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node ./src/index.js --presets es2015,stage-2",
+    "cli": "babel-node ./src/cli.js --presets es2015,stage-2"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,32 @@
   "bugs": {
     "url": "https://github.com/kevingzhang/research-ipdag/issues"
   },
-  "homepage": "https://github.com/kevingzhang/research-ipdag#readme"
+  "homepage": "https://github.com/kevingzhang/research-ipdag#readme",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "babel": "^6.23.0",
+    "cids": "^0.5.2",
+    "ipfs-pubsub-room": "^1.1.5",
+    "ipld-dag-pb": "^0.13.0",
+    "ipld-graph-builder": "^1.3.7",
+    "lockmap": "^0.1.0",
+    "multihashes": "^0.4.12"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-plugin-source-map-support": "^1.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "coveralls": "^3.0.0",
+    "documentation": "^5.3.5",
+    "ipfs": "^0.27.0",
+    "nyc": "^11.5.0",
+    "standard": "^10.0.2",
+    "tape": "^4.8.0"
+  }
 }
