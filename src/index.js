@@ -40,7 +40,7 @@ const run = (args)=>{
       channel.sendTo(peer, msg);
       break;
     }
-    case 'breadcast':{
+    case 'broaddcast':{
       const msg = args[2].trim();
       channel.broadcast(msg);
     }
